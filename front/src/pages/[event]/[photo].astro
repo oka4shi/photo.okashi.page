@@ -1,0 +1,109 @@
+---
+import Layout from "$layouts/Layout.astro";
+import EmbedMaps from "$components/EmbedMaps.astro";
+import { formatDate } from "common/utils";
+
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const eventsJSON = await getCollection("events");
+
+  return eventsJSON.flatMap((event) =>
+    event.data.photos.flatMap((photo) => {
+      return { params: { event: event.id, photo: photo.id } };
+    })
+  );
+}
+
+const eventsJSON = await getCollection("events");
+
+const { event: event_id, photo: photo_id } = Astro.params;
+const event = eventsJSON.find((e) => e.id === event_id) as CollectionEntry<"events">;
+const photo = event.data.photos.find((p) => p.id === photo_id);
+
+const latitude = photo?.exif.gpsLatitude;
+const longitude = photo?.exif.gpsLongitude;
+const place = latitude && longitude ? `${latitude},${longitude}` : undefined;
+
+let pageName = "";
+if (photo?.description && photo?.place) {
+  pageName = `${photo.description} (${photo.place}にて)`;
+} else if (photo?.description) {
+  pageName = `${photo.description}`;
+} else if (photo?.place) {
+  pageName = `${photo.place}にて`;
+}
+---
+
+<Layout pageName={pageName ?? undefined}>
+  <main>
+    <div class="image">
+      <img src={photo?.thumbnailURL} alt={pageName} />
+    </div>
+    <div class="description">
+      <a href={photo?.URL}>元画像を見る</a>
+      <dl>
+        <div><dt>撮影日時</dt><dd>{formatDate(photo?.dateTime, photo?.timezone) ?? "不明"}</dd></div>
+        <div><dt>カメラ</dt><dd>{photo?.exif.model ?? "不明"}</dd></div>
+        <div><dt>レンズ</dt><dd>{photo?.exif.lensModel ?? "不明"}</dd></div>
+        {
+          photo?.exif.focalLengthIn35mmFilm ? (
+            <div>
+              <dt>焦点距離(35mm換算)</dt>
+              <dd>{`${photo?.exif.focalLengthIn35mmFilm} mm`}</dd>
+            </div>
+          ) : (
+            <div>
+              <dt>焦点距離(レンズ自体)</dt>
+              <dd>{photo?.exif.focalLength ?? "不明"}</dd>
+            </div>
+          )
+        }
+        <div><dt>ISO感度</dt><dd>{photo?.exif.photographicSensitivity ?? "不明"}</dd></div>
+        <div><dt>シャッタースピード</dt><dd>{photo?.exif.exposureTime ?? "不明"}</dd></div>
+        <div><dt>F値</dt><dd>{photo?.exif.fNumber ?? "不明"}</dd></div>
+      </dl>
+
+      {latitude && longitude ? <EmbedMaps place={place} /> : null}
+    </div>
+  </main>
+</Layout>
+
+<style>
+  main {
+    padding: 0 var(--side-margin);
+    color: var(--white);
+
+    .image {
+      display: flex;
+      justify-content: center;
+      max-height: calc(100vh - 4rem);
+
+      & img {
+        max-height: 100%;
+        width: auto;
+        object-fit: contain;
+      }
+    }
+
+    .description {
+      margin: 0 1rem;
+    }
+  }
+
+  dl {
+    & div {
+      margin: 0.75rem 0;
+
+      & dt {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      & dd {
+        font-size: 1.125rem;
+      }
+    }
+  }
+</style>

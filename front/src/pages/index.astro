@@ -1,0 +1,34 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+import { getCollection } from "astro:content";
+
+import { formatDateRange } from "common/utils";
+
+const eventsJSON = await getCollection("events");
+---
+
+<Layout>
+  <h1>写真</h1>
+  <main>
+    <ul>
+      {
+        eventsJSON.map((event) => (
+          <li>
+            <a href={event.id}>{event.data.meta.title}</a>
+            <span>
+              ({formatDateRange(event.data.meta.start_at, event.data.meta.end_at)}) - {event.data.meta.description}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</Layout>
+
+<style>
+  span {
+    margin-inline-start: 1ch;
+    font-size: 1.25rem;
+  }
+</style>

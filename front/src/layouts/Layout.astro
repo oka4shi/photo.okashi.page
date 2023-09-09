@@ -1,0 +1,59 @@
+---
+import BaseHead, { type Props as HeadProps } from "src/components/BaseHead.astro";
+
+export type Props = HeadProps;
+const { ...head } = Astro.props;
+
+import "modern-css-reset";
+---
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <BaseHead {...head} />
+  </head>
+  <body>
+    <slot />
+    <style is:global>
+      @font-face {
+        font-family: "icomoon";
+        src: url("/icomoon.woff2?6b1jec") format("woff2");
+        font-weight: normal;
+        font-style: normal;
+        font-display: block;
+      }
+      :root {
+        --content-width: 1120px;
+        --side-margin: max(0px, calc((100vw - var(--content-width)) / 2));
+
+        --white: #eee;
+        --font-black: #111;
+      }
+
+      body {
+        background-color: var(--font-black);
+        color: var(--white);
+        min-height: 100vh;
+      }
+
+      h1 {
+        font-size: 2rem;
+
+        @media screen and (max-width: 450px) {
+          font-size: 1.5rem;
+        }
+      }
+      a {
+        color: var(--white);
+        font-size: 1.25rem;
+        @media screen and (max-width: 450px) {
+          font-size: 1.125rem;
+        }
+      }
+
+      a:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </body>
+</html>

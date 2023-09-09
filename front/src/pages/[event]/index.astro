@@ -1,0 +1,237 @@
+---
+import Layout from "$layouts/Layout.astro";
+import Icon from "$components/Icon.astro";
+import { calculateMasonry } from "src/common/calculateMasonry";
+import { formatDate, formatDateRange } from "common/utils";
+
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+
+const COLUMN_MIN = 1;
+const COLUMN_MAX = 5;
+const COLUMN_DEFAULT_NUMBER = 3;
+
+export async function getStaticPaths() {
+  const eventsJSON = await getCollection("events");
+
+  return eventsJSON.map((event) => {
+    return { params: { event: event.id } };
+  });
+}
+
+const eventsJSON = await getCollection("events");
+const { event: id } = Astro.params;
+
+// getStaticPaths()でページが生成されているため、eventがundefindになることはない
+const event = eventsJSON.find((e) => e.id === id) as CollectionEntry<"events">;
+
+const defaultColumns = calculateMasonry(event.data.photos, COLUMN_DEFAULT_NUMBER);
+
+const columnNumbers = [...Array(COLUMN_MAX - COLUMN_MIN + 1)].map((_, i) => i + COLUMN_MIN);
+
+const masonryData: {
+  [Key: string]: string[][];
+} = {};
+columnNumbers.forEach((numberOfColumn) => {
+  masonryData[String(numberOfColumn)] = calculateMasonry(event.data.photos, numberOfColumn).map((elements) =>
+    elements.map((element) => element.id)
+  );
+});
+
+const masonryDataJson = JSON.stringify(masonryData);
+const columnGenerator = [...Array(COLUMN_MAX - COLUMN_DEFAULT_NUMBER)].map((_, i) => i + COLUMN_DEFAULT_NUMBER);
+---
+
+<Layout pageName={event.data.meta.title}>
+  <h1>{event.data.meta.title}</h1>
+  <p>{formatDateRange(event.data.meta.start_at, event.data.meta.end_at)}</p>
+  <p>{event.data.meta.description}</p>
+  <main id="photos" data-masonry={masonryDataJson} data-min-column={COLUMN_MIN} data-max-column={COLUMN_MAX}>
+    {
+      defaultColumns.map((column, index) => (
+        <div id={`column-${index}`} class="column">
+          {column.map((photo) => (
+            <a href={`/${event.id}/${photo.id}`} id={photo.id} class="photo">
+              <img src={photo.thumbnailURL} />
+              <div class="info">
+                <p>
+                  <span>
+                    <Icon id="e902" />
+                    {photo.description}
+                  </span>
+                  <Icon id="e902" />
+                  {photo.description}
+                </p>
+                <p>
+                  <span>
+                    <Icon id="e901" />
+                    {photo.place}
+                  </span>
+                  <Icon id="e901" />
+                  {photo.place}
+                </p>
+                <p>
+                  <span>
+                    <Icon id="e900" />
+                    {formatDate(photo?.dateTime, photo?.timezone, { year: false, seconds: false })}
+                  </span>
+                  <Icon id="e900" />
+                  {formatDate(photo?.dateTime, photo?.timezone, { year: false, seconds: false })}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+      ))
+    }
+    {columnGenerator.map((id) => <div id={`column-${id}`} class="column hidden-column" />)}
+  </main>
+  <div class="options">
+    <input type="range" min={COLUMN_MIN} max={COLUMN_MAX} step="1" id="column-number-selector" />
+  </div>
+</Layout>
+
+<script>
+  const dataAttributes = document.getElementById("photos")?.dataset ?? new DOMStringMap();
+  const masonryData = JSON.parse(dataAttributes?.masonry ?? "{}") as { [Key: string]: string[][] };
+  const max_column = Number.parseInt(dataAttributes.maxColumn ?? "1");
+  const min_column = Number.parseInt(dataAttributes.minColumn ?? "1");
+
+  function setColumnNumber(columnNumber: number) {
+    masonryData[columnNumber].forEach((column, index) => {
+      const columnElement = document.getElementById(`column-${index}`);
+      column.forEach((photoId) => {
+        const photoElement = document.getElementById(photoId);
+        if (photoElement) {
+          columnElement?.appendChild(photoElement);
+        }
+      });
+      columnElement?.classList.remove("hidden-column");
+    });
+
+    for (let i = columnNumber; i < max_column; i++) {
+      document.getElementById(`column-${i}`)?.classList.add("hidden-column");
+    }
+  }
+
+  const getOptimalColumnNumber = (width: number): number => {
+    return Math.min(Math.ceil(width / 450), max_column);
+  };
+
+  const defaultColumnNumber = getOptimalColumnNumber(window.innerWidth);
+  setColumnNumber(defaultColumnNumber);
+  const selector = document.getElementById("column-number-selector") as HTMLInputElement;
+  selector.value = String(defaultColumnNumber);
+
+  selector.addEventListener("input", () => {
+    setColumnNumber(Number.parseInt(selector.value));
+  });
+</script>
+
+<style>
+  p {
+    font-size: 1.25rem;
+  }
+
+  main {
+    background: var(--font-black);
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .hidden-column {
+    display: none;
+  }
+
+  .photo {
+    display: block;
+    position: relative;
+
+    & .info {
+      position: absolute;
+      bottom: 0;
+      top: auto;
+      width: 100%;
+      height: 100%;
+      padding: 0.5rem;
+
+      font-size: 1.5rem;
+      color: var(--white);
+
+      @media screen and (max-width: 480px) {
+        font-size: 1.25rem;
+      }
+
+      transition: all 0.25s;
+      opacity: 0;
+
+      &:hover {
+        opacity: 100%;
+        background-color: rgba(0, 0, 0, 0.25);
+      }
+
+      & p {
+        white-space: nowrap;
+        position: relative;
+        -webkit-text-stroke: 3px var(--font-black);
+      }
+
+      & span {
+        position: absolute;
+        -webkit-text-stroke: 0px;
+      }
+    }
+
+    .icon {
+      margin-inline-end: 0.5em;
+    }
+  }
+
+  .options {
+    position: fixed;
+    bottom: 0;
+    height: 1.5rem;
+    margin: 0.5rem;
+
+    & input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.5);
+      height: 3px;
+      border-radius: 10px;
+      outline: 0;
+
+      &:hover {
+        background: rgba(255, 255, 255, 1);
+      }
+
+      &::-webkit-slider-thumb,
+      &::-moz-range-thumb {
+        -webkit-appearance: none;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        border: var(--white) 2px solid;
+        background: rgba(0, 0, 0, 0.6);
+      }
+      &::-moz-focus-outer {
+        border: 0;
+      }
+      &:hover::-webkit-range-thumb,
+      &:hover::-moz-range-thumb {
+        background: rgba(0, 0, 0, 1);
+      }
+    }
+  }
+</style>

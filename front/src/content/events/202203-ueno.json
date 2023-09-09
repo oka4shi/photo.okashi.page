@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "title": "上野",
+    "description": "アメ横、上野公園など",
+    "start_at": "2023-03-28T04:08:49.000Z"
+  },
+  "photos": [
+    {
+      "id": "25bf8350-77d5-4a01-b306-b1e0cf4cca6b",
+      "URL": "https://files.photo.okashi.page/25bf8350-77d5-4a01-b306-b1e0cf4cca6b.jpg",
+      "thumbnailURL": "https://files.photo.okashi.page/25bf8350-77d5-4a01-b306-b1e0cf4cca6b_thumbnail.webp",
+      "description": "中華料理",
+      "place": "アメ横",
+      "dateTime": "2023-03-28T04:08:49.000Z",
+      "timezone": "+09:00",
+      "aspectRatio": 0.6753086419753086,
+      "exif": {
+        "make": "NIKON CORPORATION",
+        "model": "NIKON Z 5",
+        "exposureTime": "1/50",
+        "fNumber": "f/3.2",
+        "photographicSensitivity": "100",
+        "exposureBiasValue": "0",
+        "focalLength": "28 mm",
+        "focalLengthIn35mmFilm": "28",
+        "lensMake": "NIKON",
+        "lensModel": "NIKKOR Z 28mm f/2.8"
+      }
+    },
+    {
+      "id": "6c46961f-2afa-4ce6-9289-6c3e883f397b",
+      "URL": "https://files.photo.okashi.page/6c46961f-2afa-4ce6-9289-6c3e883f397b.jpg",
+      "thumbnailURL": "https://files.photo.okashi.page/6c46961f-2afa-4ce6-9289-6c3e883f397b_thumbnail.webp",
+      "description": "ワンタン麺",
+      "place": "アメ横",
+      "dateTime": "2023-03-28T04:08:43.000Z",
+      "timezone": "+09:00",
+      "aspectRatio": 0.6753086419753086,
+      "exif": {
+        "make": "NIKON CORPORATION",
+        "model": "NIKON Z 5",
+        "exposureTime": "1/50",
+        "fNumber": "f/3.2",
+        "photographicSensitivity": "100",
+        "exposureBiasValue": "0",
+        "focalLength": "28 mm",
+        "focalLengthIn35mmFilm": "28",
+        "lensMake": "NIKON",
+        "lensModel": "NIKKOR Z 28mm f/2.8"
+      }
+    },
+    {
+      "id": "7be68420-abaf-4c6a-aa46-5b52d4020ecc",
+      "URL": "https://files.photo.okashi.page/7be68420-abaf-4c6a-aa46-5b52d4020ecc.jpg",
+      "thumbnailURL": "https://files.photo.okashi.page/7be68420-abaf-4c6a-aa46-5b52d4020ecc_thumbnail.webp",
+      "description": "",
+      "place": "上野公園",
+      "dateTime": "2023-03-28T05:45:05.000Z",
+      "timezone": "+09:00",
+      "aspectRatio": 0.6753086419753086,
+      "exif": {
+        "make": "NIKON CORPORATION",
+        "model": "NIKON Z 5",
+        "exposureTime": "1/2000",
+        "fNumber": "f/4",
+        "photographicSensitivity": "100",
+        "exposureBiasValue": "0",
+        "focalLength": "28 mm",
+        "focalLengthIn35mmFilm": "28",
+        "lensMake": "NIKON",
+        "lensModel": "NIKKOR Z 28mm f/2.8"
+      }
+    },
+    {
+      "id": "f2f6561a-3900-4a3a-b745-4666a4786c5e",
+      "URL": "https://files.photo.okashi.page/f2f6561a-3900-4a3a-b745-4666a4786c5e.jpg",
+      "thumbnailURL": "https://files.photo.okashi.page/f2f6561a-3900-4a3a-b745-4666a4786c5e_thumbnail.webp",
+      "description": "赤門(正面より)",
+      "place": "",
+      "dateTime": "2023-03-28T06:10:06.000Z",
+      "timezone": "+09:00",
+      "aspectRatio": 0.6753086419753086,
+      "exif": {
+        "make": "NIKON CORPORATION",
+        "model": "NIKON Z 5",
+        "exposureTime": "1/400",
+        "fNumber": "f/3.2",
+        "photographicSensitivity": "100",
+        "exposureBiasValue": "0",
+        "focalLength": "28 mm",
+        "focalLengthIn35mmFilm": "28",
+        "lensMake": "NIKON",
+        "lensModel": "NIKKOR Z 28mm f/2.8",
+        "gpsLatitude": 35.710597,
+        "gpsLongitude": 139.760174
+      }
+    }
+  ]
+}
