@@ -39,7 +39,7 @@ if (photo?.description && photo?.place) {
 <Layout pageName={pageName ?? undefined}>
   <main>
     <div class="image">
-      <img src={photo?.thumbnailURL} alt={pageName} />
+      <img src={photo?.thumbnailURL} alt={pageName} height={photo?.aspectRatio} width={1} />
     </div>
     <div class="description">
       <a href={photo?.URL}>元画像を見る</a>
@@ -78,10 +78,10 @@ if (photo?.description && photo?.place) {
     .image {
       display: flex;
       justify-content: center;
-      max-height: calc(100vh - 4rem);
 
       & img {
-        max-height: 100%;
+        max-height: calc(100vh - 4rem);
+        height: 100%;
         width: auto;
         object-fit: contain;
       }
