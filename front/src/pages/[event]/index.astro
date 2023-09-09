@@ -52,7 +52,7 @@ const columnGenerator = [...Array(COLUMN_MAX - COLUMN_DEFAULT_NUMBER)].map((_, i
         <div id={`column-${index}`} class="column">
           {column.map((photo) => (
             <a href={`/${event.id}/${photo.id}`} id={photo.id} class="photo">
-              <img src={photo.thumbnailURL} alt={photo.description} />
+              <img src={photo.thumbnailURL} alt={photo.description} height={photo.aspectRatio} width={1}/>
               <div class="info">
                 <p>
                   <span>
