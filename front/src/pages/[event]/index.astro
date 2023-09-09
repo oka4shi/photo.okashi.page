@@ -49,7 +49,7 @@ const columnGenerator = [...Array(COLUMN_MAX - COLUMN_DEFAULT_NUMBER)].map((_, i
   <main id="photos" data-masonry={masonryDataJson} data-min-column={COLUMN_MIN} data-max-column={COLUMN_MAX}>
     {
       defaultColumns.map((column, index) => (
-        <div id={`column-${index}`} class="column hidden-column">
+        <div id={`column-${index}`} class="column">
           {column.map((photo) => (
             <a href={`/${event.id}/${photo.id}`} id={photo.id} class="photo">
               <img src={photo.thumbnailURL} alt={photo.description} />
