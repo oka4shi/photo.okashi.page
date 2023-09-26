@@ -220,8 +220,10 @@
         }
       })) as signedUrlCollectionType;
 
-      await Promise.all(
-        signedUrls.map(async (url, index) => {
+      (async () => {
+        for (let index = 0; index < signedUrls.length; index++) {
+          const url = signedUrls[index];
+
           fileProgress.setValue(index / signedUrls.length);
           fileProgress.setText(`${signedUrls.length}枚中${index + 1}枚目`);
           const file = files[index];
@@ -266,19 +268,20 @@
 
           stepProgress.setText("サムネイルをアップロードしています");
           uploadFileToR2(url.thumbnail?.webp ?? "", webp);
+          uploadFileToR2(url.smallThumbnail?.webp ?? "", webp_small);
 
           localStorage.setItem("eventJson", JSON.stringify(eventJson, null, 2));
           stepProgress.setText("");
           stepProgress.setValue(1);
-        })
-      );
+        }
+      })();
+      fileProgress.setText("画像のアップロードが完了しました");
+      fileProgress.setValue(1);
     } else {
       fileProgress.setText("対象となる画像がありません。");
       fileProgress.setValue(1);
       stepProgress.setValue(1);
     }
-    fileProgress.setText("画像のアップロードが完了しました");
-    fileProgress.setValue(1);
   };
 </script>
 
