@@ -58,7 +58,7 @@ export const DELETE = (async ({ params }) => {
     }
 
     if (res.Deleted) {
-      return new Response(null, { status: 204 });
+      return new Response(null, { status: 200 });
     } else {
       throw error(500, "Object was not deleted");
     }

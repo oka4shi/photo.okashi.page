@@ -32,15 +32,33 @@
       }
     }
   };
+
+  const removePhoto = async (id: string) => {
+    await fetch(`/r2_contents/${id}`, {
+      method: "DELETE",
+      headers: new Headers({ Accept: "application/json" }),
+    }).then((response) => {
+      if (response.ok) {
+        if (eventJson) {
+          eventJson.photos = eventJson?.photos.filter((photo) => photo.id !== id);
+        }
+        return;
+      } else {
+        return Promise.reject(new Error(`Failed to remove the file: ${response.status} ${response.statusText}`));
+      }
+    });
+  };
 </script>
 
 <h1>タグの編集</h1>
 {#if eventJson}
   <h2><input type="text" bind:value={eventJson.meta.title} placeholder="イベント名" /></h2>
+  <p>{eventJson.photos.length} 枚の画像があります</p>
   {#each eventJson.photos as photo, index (photo.id)}
     <div class="photo" animate:flip={{ duration: (d) => Math.sqrt(d) * 25, easing: cubicInOut }}>
       <div class="tools">
         <button on:click={() => upPhoto(index)} tabindex="-1">↑</button>
+        <button on:click={async () => await removePhoto(photo.id)} tabindex="-1">✕</button>
         <button on:click={() => downPhoto(index)} tabindex="-1">↓</button>
       </div>
       <a href={photo.URL} tabindex="-1">
