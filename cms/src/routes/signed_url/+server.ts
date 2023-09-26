@@ -35,6 +35,11 @@ const isAllValidExtensions = (target: string[]): target is validExtensionsType[]
   return target.every((t) => isValidExtension(t));
 };
 
+const getSignedUrlWrapper = async (name: string): Promise<string> => {
+  return await getSignedUrl(R2, new PutObjectCommand({ Bucket: BUCKET_NAME, Key: name }), {
+    expiresIn: signedUrlPeriod * 60,
+  });
+};
 export const GET = (async ({ url }) => {
   /*
   オプションはquery paramsで以下の通り指定する。
@@ -58,33 +63,32 @@ export const GET = (async ({ url }) => {
         const uuid = crypto.randomUUID();
 
         const fileName = `${uuid}.${extension}`;
-        const signedUrl = await getSignedUrl(R2, new PutObjectCommand({ Bucket: BUCKET_NAME, Key: fileName }), {
-          expiresIn: signedUrlPeriod * 60,
-        });
+        const signedUrl = await getSignedUrlWrapper(fileName);
 
-        let thumbnailUrls: thumbnailExtensionsType = {};
+        const thumbnailUrls: thumbnailExtensionsType = {};
+        const smallThumbnailUrls: thumbnailExtensionsType = {};
         await Promise.all(
           thumbnailExtensions.map(async (extension) => {
-            const fileName = `${uuid}_thumbnail.${extension}`;
-            const signedUrl = await getSignedUrl(R2, new PutObjectCommand({ Bucket: BUCKET_NAME, Key: fileName }), {
-              expiresIn: signedUrlPeriod * 60,
-            });
+            const thumbnailFileName = `${uuid}_thumbnail.${extension}`;
+            const thumbnailSignedUrl = await getSignedUrlWrapper(thumbnailFileName);
+            thumbnailUrls[extension] = thumbnailSignedUrl;
 
-            thumbnailUrls[extension] = signedUrl;
+            const smallThumbnailFileName = `${uuid}_small.${extension}`;
+            const smallThumbnailSignedUrl = await getSignedUrlWrapper(smallThumbnailFileName);
+            smallThumbnailUrls[extension] = smallThumbnailSignedUrl;
           })
         );
 
         if (Object.keys(thumbnailUrls).length >= 1) {
-          return { id: uuid, raw: signedUrl, thumbnail: thumbnailUrls };
+          return { id: uuid, raw: signedUrl, thumbnail: thumbnailUrls, smallThumbnail: smallThumbnailUrls };
         } else {
           return { id: uuid, raw: signedUrl };
         }
       })
     );
 
-    console.log(signedUrls);
     return json(signedUrls);
-  } catch (error: any) {
+  } catch (e) {
     throw error(500, "Failed to generate signed URL");
   }
 }) satisfies RequestHandler;

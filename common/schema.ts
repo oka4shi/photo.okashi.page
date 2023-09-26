@@ -21,6 +21,7 @@ const photoSchema = z.object({
     id: z.string().uuid(),
     URL: z.string().url(),
     thumbnailURL: z.string().url(),
+    smallThumbnailURL: z.string().url(),
     description: z.string(),
     place: z.string(),
     dateTime: z.string().datetime().optional(),

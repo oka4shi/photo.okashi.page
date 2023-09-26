@@ -8,4 +8,5 @@ export type signedUrlCollectionType = {
   id: string;
   raw: string;
   thumbnail?: thumbnailExtensionsType;
+  smallThumbnail?: thumbnailExtensionsType;
 }[];

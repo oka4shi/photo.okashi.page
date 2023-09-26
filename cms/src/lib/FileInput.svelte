@@ -10,6 +10,7 @@
   import type { GetBucketPolicyStatusCommand } from "@aws-sdk/client-s3";
 
   const THUMBNAIL_SIZE = 1620;
+  const SMALL_THUMBNAIL_SIZE = 450;
   const R2_DOMAIN = "files.photo.okashi.page";
 
   let filesDOM: HTMLInputElement;
@@ -240,6 +241,10 @@
             stepProgress.setErrorText("サムネイルの生成に失敗しました！");
             throw err;
           });
+          const webp_small = await resizeImage(file, SMALL_THUMBNAIL_SIZE).catch((err) => {
+            stepProgress.setErrorText("サムネイルの生成に失敗しました！");
+            throw err;
+          });
           stepProgress.setValue(0.25);
 
           stepProgress.setText("EXIF情報を取得しています");
@@ -254,6 +259,7 @@
             id: url.id,
             URL: `https://${R2_DOMAIN}/${url.id}.jpg`,
             thumbnailURL: `https://${R2_DOMAIN}/${url.id}_thumbnail.webp`,
+            smallThumbnailURL: `https://${R2_DOMAIN}/${url.id}_small.webp`,
             description: "",
             place: "",
             dateTime: date?.ISO8601,
