@@ -117,7 +117,6 @@
   };
 
   const getDateFromExif = (exif: ExifReader.Tags | undefined): { ISO8601: string; timezone?: string } | undefined => {
-    // GPSの時間が記録されていていたらそれを参照し、なければカメラ本体の時間を参照する
     // ISO 8601(タイムゾーン付き)で返却
     if (!exif) {
       return;
@@ -126,15 +125,7 @@
     const dateTime = exif["DateTimeOriginal"]?.description;
     const offsetTime = exif["OffsetTimeOriginal"]?.description;
 
-    const gpsDateStamp = exif["GPSDateStamp"]?.description;
-    const gpsTimeStamp = exif["GPSTimeStamp"]?.description;
-
-    if (gpsDateStamp && gpsTimeStamp) {
-      const date = gpsDateStamp.replaceAll(":", "-");
-      const time = gpsTimeStamp.split(".")[0];
-
-      return { ISO8601: new Date(`${date}T${time}Z`).toJSON(), timezone: offsetTime };
-    } else if (dateTime) {
+    if (dateTime) {
       const [date_raw, time] = dateTime.split(" ");
       const date = date_raw.replaceAll(":", "-");
 
